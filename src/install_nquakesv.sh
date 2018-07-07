@@ -43,6 +43,7 @@ docker=""
 nqinstalldir=""
 nqhostname=""
 nqnumports=""
+nqinstallbots=""
 nqinstallqtv=""
 nqinstallqwfwd=""
 nqipaddr=""
@@ -81,6 +82,10 @@ for i in "$@"; do
       ;;
     --number-of-ports=*)
       nqnumports="${i#*=}"
+      shift
+      ;;
+    --bots)
+      nqinstallbots="n"
       shift
       ;;
     --qtv)
@@ -131,6 +136,7 @@ done
 defaultdir=${nqinstalldir:-\~/nquakesv}
 defaulthostname=${nqhostname:-"KTX Allround"}
 defaultports=${nqnumports:-4}
+defaultbots=${nqinstallbots:-n}
 defaultqtv=${nqinstallqtv:-n}
 defaultqwfwd=${nqinstallqwfwd:-n}
 defaultadmin=${nqadmin:-${USER}}
@@ -223,6 +229,10 @@ nqiecho
   printf "What should the rcon password be? [${defaultrcon}]: "
   read rcon
 
+  # Bots
+  printf "Do you wish to enable bot support? (y/n) [${defaultbots}]: "
+  read bots
+
   # QTV
   printf "Do you wish to run a qtv proxy? (y/n) [${defaultqtv}]: "
   read qtv
@@ -262,6 +272,7 @@ nqecho "========================================="
 [ -z "${hostdns}" ] && hostdns=${nqipaddr}
 [ -z "${ports}" ] && ports=${defaultports}
 [ -z "${rcon}" ] && rcon=${defaultrcon}
+[ -z "${bots}" ] && rcon=${defaultbots}
 [ -z "${qtv}" ] && qtv=${defaultqtv}
 [ -z "${qtvpass}" ] && qtvpass=${defaultqtvpass}
 [ -z "${qwfwd}" ] && qwfwd=${defaultqwfwd}
@@ -276,6 +287,8 @@ nqnecho "Listen address:      "
 [ -z "${hostdns}" ] && nqecho "<resolve address>" || nqecho "${hostdns}"
 nqecho "Number of ports:     ${ports}"
 nqecho "RCON password:       ${rcon}"
+nqnecho "Enable bots:         "
+[ "${bots}" = "y" ] && nqecho "yes" || nqecho "no"
 nqnecho "Install QTV:         "
 [ "${qtv}" = "y" ] && nqecho "yes (password: ${qtvpass})" || nqecho "no"
 nqnecho "Install QWFWD:       "
