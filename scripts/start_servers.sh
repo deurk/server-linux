@@ -217,8 +217,8 @@ start_port() {
         count=$(ps ax | grep -v grep | grep "mvdsv -port ${port}" | wc -l)
         printf "* Starting mvdsv #${num} (port ${port})..."
         [ ${count} -eq 0 ] && {
-        start_port ${port} ${num}
-        echo "[OK]"
+            start_port ${port} ${num}
+            echo "[OK]"
         } || echo "[ALREADY RUNNING]"
     done
 
@@ -228,9 +228,9 @@ start_port() {
         printf "* Starting qtv (port ${qtvport})..."
         count=$(ps ax | grep -v grep | grep "qtv.bin +exec qtv.cfg" | wc -l)
         [ ${count} -eq 0 ] && {
-        generate_qtv_script
-        $(cat ~/.nquakesv/install_dir)/run/qtv.sh > /dev/null &
-        echo "[OK]"
+            generate_qtv_script
+            $(cat ~/.nquakesv/install_dir)/run/qtv.sh > /dev/null &
+            echo "[OK]"
         } || echo "[ALREADY RUNNING]"
     }
 
@@ -240,9 +240,9 @@ start_port() {
         printf "* Starting qwfwd (port ${qwfwdport})..."
         count=$(ps ax | grep -v grep | grep "./qwfwd.bin" | wc -l)
         [ ${count} -eq 0 ] && {
-        generate_qwfwd_script
-        $(cat ~/.nquakesv/install_dir)/run/qwfwd.sh > /dev/null &
-        echo "[OK]"
+            generate_qwfwd_script
+            $(cat ~/.nquakesv/install_dir)/run/qwfwd.sh > /dev/null &
+            echo "[OK]"
         } || echo "[ALREADY RUNNING]"
     }
 }
