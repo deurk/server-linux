@@ -9,8 +9,8 @@
 unzip=`which unzip`
 if [ "$unzip"  = "" ]
 then
-        echo "Unzip is not installed. Please install it and run the nQuakesv installation again."
-        exit
+    echo "Unzip is not installed. Please install it and run the nQuakesv installation again."
+    exit
 fi
 
 # Change folder to nQuakesv
@@ -27,35 +27,35 @@ cd tmp
 wget --inet4-only -q -O nquake.ini https://raw.githubusercontent.com/nQuake/client-win32/master/etc/nquake.ini
 if [ -s "nquake.ini" ]
 then
-        echo foo >> /dev/null
+    echo foo >> /dev/null
 else
-        echo "Error: Could not download nquake.ini. Better luck next time. Exiting."
-	cd ..
-	rm -rf tmp
-        exit
+    echo "Error: Could not download nquake.ini. Better luck next time. Exiting."
+    cd ..
+    rm -rf tmp
+    exit
 fi
 
 # List all the available mirrors
 echo "From what mirror would you like to download the maps?"
 grep "[0-9]\{1,2\}=\".*" nquake.ini | cut -d "\"" -f2 | nl
 if [ "$1" == "--random-mirror" ] || [ "$2" == "--random-mirror" ] || [ "$3" == "--random-mirror" ] || [ "$4" == "--random-mirror" ]; then
-        mirror=""
+    mirror=""
 else
-        read -p "Enter mirror number [random]: " mirror
+    read -p "Enter mirror number [random]: " mirror
 fi
 mirror=$(grep "^$mirror=[fhtp]\{3,4\}://[^ ]*$" nquake.ini | cut -d "=" -f2)
 if [ "$mirror" = "" ]
 then
-        echo;echo -n "* Using mirror: "
-        RANGE=$(expr$(grep "[0-9]\{1,2\}=\".*" nquake.ini | cut -d "\"" -f2 | nl | tail -n1 | cut -f1) + 1)
-        while [ "$mirror" = "" ]
-        do
-                number=$RANDOM
-                let "number %= $RANGE"
-                mirror=$(grep "^$number=[fhtp]\{3,4\}://[^ ]*$" nquake.ini | cut -d "=" -f2)
-                mirrorname=$(grep "^$number=\".*" nquake.ini | cut -d "\"" -f2)
-        done
-        echo "$mirrorname"
+    echo;echo -n "* Using mirror: "
+    RANGE=$(expr$(grep "[0-9]\{1,2\}=\".*" nquake.ini | cut -d "\"" -f2 | nl | tail -n1 | cut -f1) + 1)
+    while [ "$mirror" = "" ]
+    do
+        number=$RANDOM
+        let "number %= $RANGE"
+        mirror=$(grep "^$number=[fhtp]\{3,4\}://[^ ]*$" nquake.ini | cut -d "=" -f2)
+        mirrorname=$(grep "^$number=\".*" nquake.ini | cut -d "\"" -f2)
+    done
+    echo "$mirrorname"
 fi
 echo
 
@@ -64,41 +64,41 @@ echo "=== Downloading ==="
 wget --inet4-only -O sv-maps.zip $mirror/sv-maps.zip
 if [ -s "sv-maps.zip" ]
 then
-        if [ "$(du sv-maps.zip | cut -f1)" \> "0" ]
-        then
-                wget --inet4-only -O sv-maps-gpl.zip $mirror/sv-maps-gpl.zip
-        fi
+    if [ "$(du sv-maps.zip | cut -f1)" \> "0" ]
+    then
+        wget --inet4-only -O sv-maps-gpl.zip $mirror/sv-maps-gpl.zip
+    fi
 fi
 
 # Terminate installation if not all packages were downloaded
 if [ -s "sv-maps-gpl.zip" ]
 then
-        if [ "$(du sv-maps-gpl.zip | cut -f1)" \> "0" ]
-        then
-                echo foo >> /dev/null
-        else
-                echo "Error: The maps failed to download. Better luck next time. Exiting."
-                cd ..
-		rm -rf tmp
-                exit
-        fi
-else
+    if [ "$(du sv-maps-gpl.zip | cut -f1)" \> "0" ]
+    then
+        echo foo >> /dev/null
+    else
         echo "Error: The maps failed to download. Better luck next time. Exiting."
-	cd ..
-	rm -rf tmp
+        cd ..
+        rm -rf tmp
         exit
+    fi
+else
+    echo "Error: The maps failed to download. Better luck next time. Exiting."
+    cd ..
+    rm -rf tmp
+    exit
 fi
 
 # Ask to restart servers
 if [ "$1" == "--restart" ] || [ "$2" == "--restart" ] || [ "$3" == "--restart" ] || [ "$4" == "--restart" ]; then
-        restart="y"
+    restart="y"
 else
-        if [ "$1" == "--no-restart" ] || [ "$2" == "--no-restart" ] || [ "$3" == "--no-restart" ] || [ "$4" == "--no-restart" ]; then
-                restart="n"
-        else
-                read -p "Do you want the script to stop and restart your servers and proxies? (y/n) [n]: " restart
-                echo
-        fi
+    if [ "$1" == "--no-restart" ] || [ "$2" == "--no-restart" ] || [ "$3" == "--no-restart" ] || [ "$4" == "--no-restart" ]; then
+        restart="n"
+    else
+        read -p "Do you want the script to stop and restart your servers and proxies? (y/n) [n]: " restart
+        echo
+    fi
 fi
 
 # Install updates
@@ -114,8 +114,8 @@ echo "done"
 # Stop servers
 if [ "$restart" == "y" ]
 then
-        echo "* Stopping servers and proxies...done"
-        ../stop_servers.sh
+    echo "* Stopping servers and proxies...done"
+    ../stop_servers.sh
 fi
 
 # Move maps into place
@@ -132,8 +132,8 @@ echo "done"
 # Restart servers
 if [ "$restart" == "y" ]
 then
-        echo "* Starting servers and proxies...done"
-        ./start_servers.sh > /dev/null 2>&1
+    echo "* Starting servers and proxies...done"
+    ./start_servers.sh > /dev/null 2>&1
 fi
 
 echo;echo "Update complete."
