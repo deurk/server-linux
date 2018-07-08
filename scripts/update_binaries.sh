@@ -7,8 +7,7 @@
 
 # Check if unzip is installed
 unzip=`which unzip`
-if [ "$unzip"  = "" ]
-then
+if [ "$unzip"  = "" ]; then
     echo "Unzip is not installed. Please install it and run the nQuakesv installation again."
     exit
 fi
@@ -32,8 +31,7 @@ binary=`uname -i`
 mkdir tmp
 cd tmp
 wget --inet4-only -q -O nquake.ini https://raw.githubusercontent.com/nQuake/client-win32/master/etc/nquake.ini
-if [ -s "nquake.ini" ]
-then
+if [ -s "nquake.ini" ]; then
     echo foo >> /dev/null
 else
     echo "Error: Could not download nquake.ini. Better luck next time. Exiting."
@@ -49,12 +47,10 @@ else
     read -p "Enter mirror number [random]: " mirror
 fi
 mirror=$(grep "^$mirror=[fhtp]\{3,4\}://[^ ]*$" nquake.ini | cut -d "=" -f2)
-if [ "$mirror" = "" ]
-then
+if [ "$mirror" = "" ]; then
     echo;echo -n "* Using mirror: "
     RANGE=$(expr$(grep "[0-9]\{1,2\}=\".*" nquake.ini | cut -d "\"" -f2 | nl | tail -n1 | cut -f1) + 1)
-    while [ "$mirror" = "" ]
-    do
+    while [ "$mirror" = "" ]; do
         number=$RANDOM
         let "number %= $RANGE"
         mirror=$(grep "^$number=[fhtp]\{3,4\}://[^ ]*$" nquake.ini | cut -d "=" -f2)
@@ -67,26 +63,21 @@ echo
 
 # Download binaries
 echo "=== Downloading ==="
-if [ "$binary" == "x86_64" ]
-then
+if [ "$binary" == "x86_64" ]; then
     wget --inet4-only -O sv-bin-x64.zip $mirror/sv-bin-x64.zip
 else
     wget --inet4-only -O sv-bin-x86.zip $mirror/sv-bin-x86.zip
 fi
 
 # Terminate installation if not all packages were downloaded
-if [ -s "sv-bin-x86.zip" -o -s "sv-bin-x64.zip" ]
-then
-    if [ -s "sv-bin-x86.zip" ]
-    then
-        if [ "$(du sv-bin-x86.zip | cut -f1)" \> "0" ]
-        then
+if [ -s "sv-bin-x86.zip" -o -s "sv-bin-x64.zip" ]; then
+    if [ -s "sv-bin-x86.zip" ]; then
+        if [ "$(du sv-bin-x86.zip | cut -f1)" \> "0" ]; then
             echo foo >> /dev/null
         else
             echo "Error: The binaries failed to download. Better luck next time. Exiting."
             rm -rf sv-bin-x86.zip nquake.ini
-            if [ "$created" = "1" ]
-            then
+            if [ "$created" = "1" ]; then
                 cd ..
                 read -p "The directory $directory is about to be removed, press Enter to confirm or CTRL+C to exit." remove
                 rm -rf tmp
@@ -94,14 +85,12 @@ then
             exit
         fi
     else
-        if [ "$(du sv-bin-x64.zip | cut -f1)" \> "0" ]
-        then
+        if [ "$(du sv-bin-x64.zip | cut -f1)" \> "0" ]; then
             echo foo >> /dev/null
         else
             echo "Error: The binaries failed to download. Better luck next time. Exiting."
             rm -rf sv-bin-x64.zip nquake.ini
-            if [ "$created" = "1" ]
-            then
+            if [ "$created" = "1" ]; then
                 cd ..
                 read -p "The directory $directory is about to be removed, press Enter to confirm or CTRL+C to exit." remove
                 rm -rf tmp
@@ -132,8 +121,7 @@ fi
 echo "=== Installing ==="
 # Extract binaries
 echo -n "* Extracting binaries..."
-if [ "$binary" == "x86_64" ]
-then
+if [ "$binary" == "x86_64" ]; then
     unzip -qqo sv-bin-x64.zip 2> /dev/null;echo "done"
 else
     unzip -qqo sv-bin-x86.zip 2> /dev/null;echo "done"
@@ -144,21 +132,18 @@ echo -n "* Setting permissions..."
 chmod -f +x mvdsv 2> /dev/null
 chmod -f -x ../mvdsv 2> /dev/null
 chmod 644 ktx/qwprogs.so 2> /dev/null
-if [ "$qtv" == "1" ]
-then
+if [ "$qtv" == "1" ]; then
     chmod -f +x qtv/qtv.bin 2> /dev/null
     chmod -f -x ../qtv/qtv.bin 2> /dev/null
 fi
-if [ "$qwfwd" == "1" ]
-then
+if [ "$qwfwd" == "1" ]; then
     chmod -f +x qwfwd/qwfwd.bin 2> /dev/null
     chmod -f -x ../qwfwd/qwfwd.bin 2> /dev/null
 fi
 echo "done"
 
 # Stop servers
-if [ "$restart" == "y" ]
-then
+if [ "$restart" == "y" ]; then
     echo "* Stopping servers and proxies...done"
     ../stop_servers.sh
 fi
@@ -173,17 +158,15 @@ if [ -f ../ktx/qwprogs.so ]; then
     mv ../ktx/qwprogs.so ../ktx/qwprogs.so.old
 fi
 mv ktx/qwprogs.so ../ktx/
-if [ "$qtv" == "1" ]
-then
+if [ "$qtv" == "1" ]; then
     if [ -f ../qtv/qtv.bin ]; then
         mv ../qtv/qtv.bin ../qtv/qtv.bin.old
     fi
     mv qtv/qtv.bin ../qtv/
 fi
-if [ "$qwfwd" == "1" ]
-then
+if [ "$qwfwd" == "1" ]; then
     if [ -f ../qwfwd/qwfwd.bin ]; then
-            mv ../qwfwd/qwfwd.bin ../qwfwd/qwfwd.bin.old
+        mv ../qwfwd/qwfwd.bin ../qwfwd/qwfwd.bin.old
     fi
         mv qwfwd/qwfwd.bin ../qwfwd/
 fi
@@ -196,8 +179,7 @@ rm -rf tmp
 echo "done"
 
 # Restart servers
-if [ "$restart" == "y" ]
-then
+if [ "$restart" == "y" ]; then
     echo "* Starting servers and proxies...done"
     ./start_servers.sh > /dev/null 2>&1
 fi

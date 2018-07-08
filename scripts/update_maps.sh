@@ -7,8 +7,7 @@
 
 # Check if unzip is installed
 unzip=`which unzip`
-if [ "$unzip"  = "" ]
-then
+if [ "$unzip"  = "" ]; then
     echo "Unzip is not installed. Please install it and run the nQuakesv installation again."
     exit
 fi
@@ -25,8 +24,7 @@ echo
 mkdir -p tmp
 cd tmp
 wget --inet4-only -q -O nquake.ini https://raw.githubusercontent.com/nQuake/client-win32/master/etc/nquake.ini
-if [ -s "nquake.ini" ]
-then
+if [ -s "nquake.ini" ]; then
     echo foo >> /dev/null
 else
     echo "Error: Could not download nquake.ini. Better luck next time. Exiting."
@@ -38,18 +36,19 @@ fi
 # List all the available mirrors
 echo "From what mirror would you like to download the maps?"
 grep "[0-9]\{1,2\}=\".*" nquake.ini | cut -d "\"" -f2 | nl
+
 if [ "$1" == "--random-mirror" ] || [ "$2" == "--random-mirror" ] || [ "$3" == "--random-mirror" ] || [ "$4" == "--random-mirror" ]; then
     mirror=""
 else
     read -p "Enter mirror number [random]: " mirror
 fi
+
 mirror=$(grep "^$mirror=[fhtp]\{3,4\}://[^ ]*$" nquake.ini | cut -d "=" -f2)
-if [ "$mirror" = "" ]
-then
+
+if [ "$mirror" = "" ]; then
     echo;echo -n "* Using mirror: "
     RANGE=$(expr$(grep "[0-9]\{1,2\}=\".*" nquake.ini | cut -d "\"" -f2 | nl | tail -n1 | cut -f1) + 1)
-    while [ "$mirror" = "" ]
-    do
+    while [ "$mirror" = "" ]; do
         number=$RANDOM
         let "number %= $RANGE"
         mirror=$(grep "^$number=[fhtp]\{3,4\}://[^ ]*$" nquake.ini | cut -d "=" -f2)
@@ -62,19 +61,15 @@ echo
 # Download maps
 echo "=== Downloading ==="
 wget --inet4-only -O sv-maps.zip $mirror/sv-maps.zip
-if [ -s "sv-maps.zip" ]
-then
-    if [ "$(du sv-maps.zip | cut -f1)" \> "0" ]
-    then
+if [ -s "sv-maps.zip" ]; then
+    if [ "$(du sv-maps.zip | cut -f1)" \> "0" ]; then
         wget --inet4-only -O sv-maps-gpl.zip $mirror/sv-maps-gpl.zip
     fi
 fi
 
 # Terminate installation if not all packages were downloaded
-if [ -s "sv-maps-gpl.zip" ]
-then
-    if [ "$(du sv-maps-gpl.zip | cut -f1)" \> "0" ]
-    then
+if [ -s "sv-maps-gpl.zip" ]; then
+    if [ "$(du sv-maps-gpl.zip | cut -f1)" \> "0" ]; then
         echo foo >> /dev/null
     else
         echo "Error: The maps failed to download. Better luck next time. Exiting."
@@ -112,8 +107,7 @@ chmod 644 qw/maps/* 2> /dev/null
 echo "done"
 
 # Stop servers
-if [ "$restart" == "y" ]
-then
+if [ "$restart" == "y" ]; then
     echo "* Stopping servers and proxies...done"
     ../stop_servers.sh
 fi
@@ -130,8 +124,7 @@ rm -rf tmp
 echo "done"
 
 # Restart servers
-if [ "$restart" == "y" ]
-then
+if [ "$restart" == "y" ]; then
     echo "* Starting servers and proxies...done"
     ./start_servers.sh > /dev/null 2>&1
 fi
