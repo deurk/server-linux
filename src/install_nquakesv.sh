@@ -479,6 +479,31 @@ echo "SV_QTVPASS=\"${qtvpass}\"" >> ~/.nquakesv/config
 }
 nqecho "done"
 
+# Bots
+qwprogs=$directory/ktx/qwprogs.so
+bots_enabled=$directory/ktx/qwprogs-bots_enabled.so
+bots_disabled=$directory/ktx/qwprogs-bots_disabled.so
+
+[ "${bots}" = "y" ] && {
+  nqnecho "* Enabling bots..."
+  [ ! -f "${bots_disabled}" ] && {
+    mv $qwprogs $bots_disabled
+    mv $bots_enabled $qwprogs
+    nqecho "done"
+  } || {
+    nqecho "bots already enabled or enable-bot-file removed - skipping"
+  }
+} || {
+  nqecho "Disabling bots..."
+  [ ! -f "${bots_enabled}" ] && {
+    mv $qwprogs $bots_enabled
+    mv $bots_disabled $qwprogs
+    nqecho "done"
+  } || {
+    nqecho "bots already disabled or disable-bot-file removed - skipping"
+  }
+}
+
 # Create port files
 nqnecho "* Adjusting amount of ports..."
 mkdir -p ~/.nquakesv/ports
